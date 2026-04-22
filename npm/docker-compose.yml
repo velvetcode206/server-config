@@ -1,0 +1,25 @@
+name: nginx-proxy-manager
+
+services:
+  app:
+    image: "jc21/nginx-proxy-manager:2.14.0"
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+
+    environment:
+      TZ:                     ${TZ}
+      INITIAL_ADMIN_EMAIL:    ${INITIAL_ADMIN_EMAIL}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
+    
+    volumes:
+      - ${NPM_BIND_PATH}/data:/data
+      - ${NPM_BIND_PATH}/letsencrypt:/etc/letsencrypt
+
+networks:
+  default:
+    external: true
+    name: proxy

@@ -1,0 +1,48 @@
+name: nextcloud
+
+services:
+  db:
+    image: mariadb:12.2.2
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED
+    
+    environment:
+      MYSQL_DATABASE:      ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER:          ${DB_USER}
+      MYSQL_PASSWORD:      ${DB_PASSWORD}
+
+    volumes:
+      - ${DB_BIND_PATH}:/var/lib/mysql
+
+  redis:
+    image: redis:8.6.2-alpine
+    restart: always
+
+  app:
+    image: nextcloud:32.0.8-apache
+    restart: always
+
+    depends_on:
+      - db
+      - redis
+
+    environment:
+      MYSQL_HOST:                db
+      MYSQL_DATABASE:            ${DB_NAME}
+      MYSQL_USER:                ${DB_USER}
+      MYSQL_PASSWORD:            ${DB_PASSWORD}
+      REDIS_HOST:                redis
+      OVERWRITEPROTOCOL:         https
+      OVERWRITECLIURL:           ${OVERWRITECLIURL}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
+      NEXTCLOUD_ADMIN_USER:      ${NEXTCLOUD_ADMIN_USER}
+      NEXTCLOUD_ADMIN_PASSWORD:  ${NEXTCLOUD_ADMIN_PASSWORD}
+    
+    volumes:
+      - ${NEXTCLOUD_BIND_PATH}:/var/www/html
+
+networks:
+  default:
+    external: true
+    name: proxy
