@@ -4,20 +4,23 @@ services:
   app:
     image: "jc21/nginx-proxy-manager:2.14.0"
     restart: unless-stopped
-
     ports:
       - "80:80"
-      - "81:81"
       - "443:443"
-
+      - "81:81" # Dashboard, only mapped to access the first time, before setting a proxy host.
     environment:
       TZ:                     ${TZ}
       INITIAL_ADMIN_EMAIL:    ${INITIAL_ADMIN_EMAIL}
       INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD}
-    
     volumes:
       - ${NPM_BIND_PATH}/data:/data
       - ${NPM_BIND_PATH}/letsencrypt:/etc/letsencrypt
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
 networks:
   default:
