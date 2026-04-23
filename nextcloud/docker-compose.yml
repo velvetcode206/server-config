@@ -4,6 +4,8 @@ services:
   db:
     image: mariadb:11.8.6
     restart: always
+    networks:
+      - nextcloud_internal
     command: --transaction-isolation=READ-COMMITTED
     environment:
       MYSQL_DATABASE:      ${DB_DATABASE_NAME}
@@ -22,6 +24,8 @@ services:
   redis:
     image: redis:8.6.2
     restart: always
+    networks:
+      - nextcloud_internal
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 15s
@@ -29,9 +33,12 @@ services:
       retries: 5
       start_period: 15s
 
-  app:
+  nextcloud:
     image: nextcloud:32.0.8
     restart: always
+    networks:
+      - proxy_external
+      - nextcloud_internal
     depends_on:
       db:
         condition: service_healthy
@@ -58,6 +65,7 @@ services:
       start_period: 30s
 
 networks:
-  default:
+  proxy_external:
     external: true
-    name: proxy
+  nextcloud_internal:
+    internal: true

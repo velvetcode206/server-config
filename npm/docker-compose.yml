@@ -1,13 +1,15 @@
 name: nginx-proxy-manager
 
 services:
-  app:
+  npm:
     image: "jc21/nginx-proxy-manager:2.14.0"
     restart: unless-stopped
+    networks:
+      - proxy_external
     ports:
       - "80:80"
       - "443:443"
-      - "81:81" # Dashboard, only mapped to access the first time, before setting a proxy host.
+      - "${DASHBOARD_HOST_PORT}:81"
     environment:
       TZ:                     ${TZ}
       INITIAL_ADMIN_EMAIL:    ${INITIAL_ADMIN_EMAIL}
@@ -23,6 +25,5 @@ services:
       start_period: 15s
 
 networks:
-  default:
+  proxy_external:
     external: true
-    name: proxy

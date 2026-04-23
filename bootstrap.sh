@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-NETWORKS=("proxy")
+NETWORKS=("proxy_external")
 
 for net in "${NETWORKS[@]}"; do
   if ! docker network inspect "$net" >/dev/null 2>&1; then
