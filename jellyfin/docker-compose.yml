@@ -1,0 +1,20 @@
+name: jellyfin
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:2026042005
+    restart: 'unless-stopped'
+    networks:
+      - proxy_external
+    environment:
+      JELLYFIN_PublishedServerUrl: ${SERVER_URL}
+    volumes:
+      - ${JELLYFIN_BIND_PATH}/config:/config
+      - ${JELLYFIN_BIND_PATH}/cache:/cache
+      - ${JELLYFIN_MEDIA_PATH}/movies:/movies
+      - ${JELLYFIN_MEDIA_PATH}/series:/series
+      - ${JELLYFIN_MEDIA_PATH}/animes:/animes
+
+networks:
+  proxy_external:
+    external: true
