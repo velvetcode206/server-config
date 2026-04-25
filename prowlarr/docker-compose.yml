@@ -1,0 +1,19 @@
+name: prowlarr
+
+services:
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:release-2.3.5.5327
+    networks:
+      - proxy_external
+    environment:
+      PUID:        ${PUID}
+      PGID:        ${PGID}
+      UMASK:       ${UMASK}
+      TZ:          ${TZ}
+      WEBUI_PORTS: ${WEBUI_PORTS}
+    volumes:
+      - ${PROWLARR_BIND_PATH}/config:/config
+
+networks:
+  proxy_external:
+    external: true

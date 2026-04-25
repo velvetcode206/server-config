@@ -1,0 +1,17 @@
+name: homepage
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v1.12.3
+    networks:
+      - proxy_external
+    volumes:
+      - ${HOMEPAGE_BIND_PATH}/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/storage:/mnt/storage:ro
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_ALLOWED_HOSTS}
+
+networks:
+  proxy_external:
+    external: true
